@@ -1,0 +1,95 @@
+<!-- 微信小程序健康咨询聊天页 -->
+<view class="container">
+  <!-- 合规横幅（顶部固定，始终可见） -->
+  <view class="disclaimer-banner">
+    <text class="banner-icon">🤖</text>
+    <text class="banner-text">
+      AIGC声明：本服务仅供健康科普参考，不构成医疗诊断。紧急请拨120
+    </text>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view
+    class="message-list"
+    scroll-y="true"
+    scroll-into-view="{{scrollToId}}"
+    scroll-with-animation="true"
+  >
+    <block wx:for="{{messages}}" wx:key="id">
+      <!-- 用户消息 -->
+      <view wx:if="{{item.role === 'user'}}" class="message-row user-row">
+        <view class="bubble user-bubble">
+          <text>{{item.content}}</text>
+        </view>
+        <view class="avatar user-avatar">👤</view>
+      </view>
+
+      <!-- AI消息 -->
+      <view wx:elif="{{item.role === 'assistant'}}" class="message-row assistant-row">
+        <view class="avatar assistant-avatar">🤖</view>
+        <view class="assistant-content">
+          <!-- AIGC标识 -->
+          <view class="aigc-badge">
+            <text class="aigc-tag">🤖 AI生成</text>
+            <text wx:if="{{item.messageId}}" class="msg-id">
+              #{{item.messageId.substring(0, 8)}}
+            </text>
+          </view>
+          <!-- 气泡 -->
+          <view class="bubble assistant-bubble">
+            <text>{{item.content}}</text>
+            <text wx:if="{{item.isStreaming}}" class="cursor">|</text>
+          </view>
+          <!-- 折叠免责声明 -->
+          <view class="disclaimer-toggle" bindtap="toggleDisclaimer" data-id="{{item.id}}">
+            <text>{{item.disclaimerExpanded ? '▼' : '▶'}} ⚠️ 查看AI生成声明</text>
+          </view>
+          <view wx:if="{{item.disclaimerExpanded}}" class="disclaimer-content">
+            <text>本内容由人工智能自动生成，仅供健康科普参考，不构成医疗诊断、治疗建议或处方依据。如有健康问题，请及时就诊。\n🤖 生成式人工智能服务</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 滚动锚点 -->
+    <view id="scroll-bottom" />
+  </scroll-view>
+
+  <!-- 快速建议 -->
+  <scroll-view class="suggestions" scroll-x="true">
+    <block wx:for="{{suggestions}}" wx:key="*this">
+      <view
+        class="suggestion-chip"
+        bindtap="sendSuggestion"
+        data-text="{{item}}"
+      >
+        <text>{{item}}</text>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <textarea
+      class="input-box"
+      value="{{inputText}}"
+      bindinput="onInput"
+      bindconfirm="handleSend"
+      placeholder="{{isStreaming ? 'AI回复中，请稍候...' : '请输入健康咨询问题...'}}"
+      disabled="{{isStreaming}}"
+      auto-height
+      maxlength="500"
+      cursor-spacing="16"
+    />
+    <view
+      class="send-btn {{(isStreaming || !inputText) ? 'disabled' : ''}}"
+      bindtap="handleSend"
+    >
+      <text>{{isStreaming ? '生成中' : '发送'}}</text>
+    </view>
+  </view>
+
+  <view class="input-tip">
+    <text>本助手仅提供健康科普，不能替代医生诊断</text>
+  </view>
+</view>

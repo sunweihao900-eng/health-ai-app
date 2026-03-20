@@ -1,0 +1,219 @@
+/* 健康咨询聊天页样式 */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fa;
+}
+
+/* 合规横幅 */
+.disclaimer-banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff3cd;
+  border-bottom: 1rpx solid #ffc107;
+  padding: 12rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.banner-icon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.banner-text {
+  font-size: 22rpx;
+  color: #856404;
+  line-height: 1.4;
+}
+
+/* 消息列表 */
+.message-list {
+  flex: 1;
+  padding: 16rpx;
+  overflow: hidden;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24rpx;
+  gap: 12rpx;
+}
+
+.user-row {
+  flex-direction: row-reverse;
+}
+
+.assistant-row {
+  flex-direction: row;
+}
+
+/* 头像 */
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  background: #6c757d;
+}
+
+.assistant-avatar {
+  background: #0d6efd;
+}
+
+/* 气泡 */
+.bubble {
+  max-width: 75%;
+  padding: 20rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.user-bubble {
+  background: #0d6efd;
+  color: #ffffff;
+  border-radius: 16rpx 8rpx 16rpx 16rpx;
+}
+
+.assistant-bubble {
+  background: #ffffff;
+  color: #212529;
+  border-radius: 8rpx 16rpx 16rpx 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+/* AIGC标识 */
+.assistant-content {
+  flex: 1;
+  max-width: 75%;
+}
+
+.aigc-badge {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.aigc-tag {
+  background: #e7f3ff;
+  color: #0d6efd;
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+}
+
+.msg-id {
+  font-size: 18rpx;
+  color: #adb5bd;
+}
+
+/* 流式光标 */
+.cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+  color: #0d6efd;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 免责声明折叠 */
+.disclaimer-toggle {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #6c757d;
+  padding: 4rpx 0;
+}
+
+.disclaimer-content {
+  margin-top: 8rpx;
+  padding: 16rpx;
+  background: #fff3cd;
+  border-left: 6rpx solid #ffc107;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  color: #856404;
+  line-height: 1.5;
+}
+
+/* 快速建议 */
+.suggestions {
+  padding: 12rpx 16rpx;
+  white-space: nowrap;
+  background: #ffffff;
+  border-top: 1rpx solid #dee2e6;
+}
+
+.suggestion-chip {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  margin-right: 12rpx;
+  background: #e7f3ff;
+  color: #0d6efd;
+  border: 1rpx solid #b6d4fe;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  white-space: nowrap;
+}
+
+/* 输入区域 */
+.input-area {
+  display: flex;
+  gap: 12rpx;
+  align-items: flex-end;
+  padding: 16rpx 16rpx 8rpx;
+  background: #ffffff;
+  border-top: 1rpx solid #dee2e6;
+}
+
+.input-box {
+  flex: 1;
+  padding: 16rpx 20rpx;
+  border: 1rpx solid #dee2e6;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  background: #f8f9fa;
+  min-height: 72rpx;
+  max-height: 200rpx;
+}
+
+.send-btn {
+  padding: 16rpx 32rpx;
+  background: #0d6efd;
+  color: #ffffff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.send-btn.disabled {
+  background: #adb5bd;
+}
+
+.input-tip {
+  text-align: center;
+  font-size: 20rpx;
+  color: #adb5bd;
+  padding: 4rpx 0 12rpx;
+  background: #ffffff;
+}

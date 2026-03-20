@@ -1,0 +1,19 @@
+{
+  "pages": [
+    "pages/disclaimer/disclaimer",
+    "pages/chat/chat"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0d6efd",
+    "navigationBarTitleText": "健康科普助手",
+    "navigationBarTextStyle": "white"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于为您推荐附近医疗机构"
+    }
+  },
+  "requiredBackgroundModes": [],
+  "usingComponents": {}
+}

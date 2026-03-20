@@ -1,0 +1,112 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #ffffff;
+}
+
+.header {
+  padding: 32rpx 32rpx 24rpx;
+  background: #fff3cd;
+  border-bottom: 1rpx solid #ffc107;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.header-icon {
+  font-size: 56rpx;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #856404;
+}
+
+.header-sub {
+  font-size: 24rpx;
+  color: #856404;
+}
+
+.content {
+  flex: 1;
+  padding: 24rpx 32rpx;
+  overflow: hidden;
+}
+
+.section {
+  margin-bottom: 32rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #0d6efd;
+  margin-bottom: 12rpx;
+}
+
+.section-body {
+  display: block;
+  font-size: 28rpx;
+  color: #444;
+  line-height: 1.7;
+}
+
+.emergency-section {
+  padding: 16rpx;
+  background: #fff5f5;
+  border-radius: 12rpx;
+  border-left: 6rpx solid #dc3545;
+}
+
+.emergency-text {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #dc3545;
+  margin-bottom: 8rpx;
+  line-height: 1.6;
+}
+
+.bottom-marker {
+  text-align: center;
+  padding: 32rpx 0 48rpx;
+  font-size: 24rpx;
+  color: #adb5bd;
+}
+
+.footer {
+  padding: 16rpx 32rpx 48rpx;
+  border-top: 1rpx solid #dee2e6;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.read-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #6c757d;
+}
+
+.agree-btn {
+  padding: 28rpx;
+  border-radius: 16rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.agree-btn.active {
+  background: #0d6efd;
+  color: #ffffff;
+}
+
+.agree-btn.inactive {
+  background: #adb5bd;
+  color: #ffffff;
+}

@@ -1,0 +1,75 @@
+<!-- 首次使用强制免责声明页 -->
+<view class="page">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="header-icon">⚠️🤖</text>
+    <text class="header-title">使用前须知 — 免责声明</text>
+    <text class="header-sub">请仔细阅读，滚动到底部后方可同意</text>
+  </view>
+
+  <!-- 正文（可滚动） -->
+  <scroll-view
+    class="content"
+    scroll-y="true"
+    bindscrolltolower="onScrollToBottom"
+  >
+    <view class="section">
+      <text class="section-title">一、服务性质</text>
+      <text class="section-body">
+        "健康AI咨询助手"是由人工智能（AIGC）驱动的健康科普工具，提供非诊断、非处方的健康知识查询和就医分诊辅助服务。\n\n本服务不是医疗机构，AI不是医生，没有执业医师资质，无法提供医疗诊断、治疗方案或处方建议。
+      </text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">二、AIGC内容声明</text>
+      <text class="section-body">
+        本服务所有回复均由生成式人工智能（AIGC）自动生成，依据《生成式人工智能服务管理暂行办法》进行标识。\n\nAI生成内容可能存在不准确或不完整，不应作为医疗决策的唯一依据。
+      </text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">三、使用限制</text>
+      <text class="section-body">
+        本服务无法提供：疾病诊断、药物处方、检查报告解读、病情严重性评估、心理治疗干预。\n\n请勿依据本服务内容自行用药或停药。
+      </text>
+    </view>
+
+    <view class="section emergency-section">
+      <text class="section-title">四、紧急情况</text>
+      <text class="emergency-text">
+        遇到紧急医疗情况（心梗、脑卒中、呼吸困难等），请立即拨打 120，不要等待或使用本服务。
+      </text>
+      <text class="section-body">心理危机热线：400-161-9995</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">五、数据处理</text>
+      <text class="section-body">
+        您的咨询内容在发送前将自动脱敏，移除手机号、身份证号等个人信息。脱敏后的记录加密存储，90天后自动清除。
+      </text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">六、责任限制</text>
+      <text class="section-body">
+        因使用本服务产生的任何医疗决策后果，由用户自行承担。本服务运营方不承担因AI生成内容引起的直接或间接医疗损失责任。
+      </text>
+    </view>
+
+    <!-- 底部标记 -->
+    <view class="bottom-marker">
+      <text>— 已阅读至文件末尾 —</text>
+    </view>
+  </scroll-view>
+
+  <!-- 底部按钮 -->
+  <view class="footer">
+    <text wx:if="{{!canAgree}}" class="read-tip">↓ 请向下滚动阅读完整内容</text>
+    <view
+      class="agree-btn {{canAgree ? 'active' : 'inactive'}}"
+      bindtap="handleAgree"
+    >
+      <text>{{canAgree ? '我已阅读并同意，开始使用' : '请先阅读完整内容'}}</text>
+    </view>
+  </view>
+</view>

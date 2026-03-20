@@ -1,0 +1,250 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #0a7c5f;
+  --primary-dark: #076648;
+  --primary-light: #e8f7f4;
+  --primary-mid: #aeddd6;
+  --accent: #06b6d4;
+  --danger: #ef4444;
+  --warn-bg: #fefce8;
+  --warn-border: #fbbf24;
+  --warn-text: #92400e;
+  --bg: #edf1f7;
+  --bg-card: #ffffff;
+  --text: #1a2638;
+  --text-muted: #5a6d84;
+  --text-light: #8fa0b3;
+  --border: #dde4ee;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 18px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.14), 0 8px 20px rgba(0,0,0,0.06);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --radius-full: 9999px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+/* ─── Animations ─── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .45; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes skeletonShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+@keyframes pulseDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1); opacity: 1; }
+}
+@keyframes emergencyPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50%       { box-shadow: 0 0 0 5px rgba(239,68,68,0); }
+}
+
+.msg-enter { animation: fadeInUp 0.32s cubic-bezier(0.22,1,0.36,1) forwards; }
+.modal-enter { animation: slideIn 0.34s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.slide-up { animation: slideUp 0.28s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+/* ─── Typing cursor ─── */
+.typing-cursor {
+  display: inline-block;
+  width: 2px; height: 15px;
+  background: var(--primary);
+  margin-left: 2px;
+  vertical-align: middle;
+  border-radius: 1px;
+  animation: blink 0.9s step-end infinite;
+}
+
+/* ─── Typing dots indicator ─── */
+.typing-dots {
+  display: inline-flex; gap: 4px; align-items: center;
+  padding: 12px 16px;
+}
+.typing-dots span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: pulseDot 1.2s ease infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.16s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.32s; }
+
+/* ─── Skeleton loader ─── */
+.skeleton-line {
+  height: 13px; border-radius: 7px;
+  background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+  background-size: 400px 100%;
+  animation: skeletonShimmer 1.4s ease infinite;
+  margin-bottom: 8px;
+}
+
+/* ─── Markdown ─── */
+.md { font-size: 14.5px; line-height: 1.75; }
+.md strong { font-weight: 700; color: #0e2436; }
+.md em { font-style: italic; }
+.md code {
+  background: rgba(0,0,0,0.06); padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "SF Mono","Fira Code",monospace; font-size: 0.87em;
+}
+.md p { margin-bottom: 8px; }
+.md p:last-child { margin-bottom: 0; }
+.md ul, .md ol { padding-left: 20px; margin-bottom: 8px; }
+.md li { margin-bottom: 5px; }
+.md h3, .md h4 { font-weight: 700; font-size: 14.5px; margin: 13px 0 6px; color: var(--primary); }
+.md hr { border: none; border-top: 1px solid rgba(0,0,0,0.08); margin: 10px 0; }
+
+/* ─── 六段式 Section Cards ─── */
+.section-card {
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin-bottom: 8px;
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+.section-card:last-child { margin-bottom: 0; }
+.section-title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 700;
+  margin-bottom: 7px; letter-spacing: 0.2px;
+}
+.section-content { font-size: 14px; line-height: 1.72; }
+
+/* ─── Emergency / redirect bubble styles ─── */
+.bubble-emergency {
+  background: linear-gradient(135deg, #fef2f2, #fff1f1);
+  border: 1.5px solid #fca5a5 !important;
+  border-left: 4px solid var(--danger) !important;
+}
+.bubble-redirect {
+  background: linear-gradient(135deg, #fffbeb, #fefce8);
+  border: 1.5px solid #fcd34d !important;
+  border-left: 4px solid var(--warn-border) !important;
+}
+
+/* ─── AIGC mini disclaimer ─── */
+.aigc-mini {
+  display: flex; align-items: flex-start; gap: 5px;
+  margin-top: 6px; padding: 5px 9px;
+  background: #f8fafc; border: 1px solid #e8edf4;
+  border-radius: 7px; font-size: 11px; color: #8fa0b3; line-height: 1.5;
+}
+.aigc-mini .aigc-icon { font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+
+/* ─── Message meta (timestamp + actions) ─── */
+.msg-meta {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 5px; font-size: 11px; color: var(--text-light);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.msg-row:hover .msg-meta { opacity: 1; }
+.copy-btn {
+  display: flex; align-items: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  font-size: 11px; color: var(--text-light);
+  padding: 2px 6px; border-radius: 5px;
+  transition: background 0.15s, color 0.15s;
+}
+.copy-btn:hover { background: var(--primary-light); color: var(--primary); }
+
+/* ─── Follow-up chips ─── */
+.followup-wrap {
+  padding: 4px 0 12px;
+  display: flex; gap: 7px; flex-wrap: wrap;
+  animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.followup-chip {
+  padding: 6px 13px;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 12.5px; color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s ease;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap;
+}
+.followup-chip:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─── Quick cards ─── */
+.quick-cards-wrap {
+  display: flex; gap: 7px; overflow-x: auto;
+  padding: 2px 0 10px; scrollbar-width: none;
+}
+.quick-cards-wrap::-webkit-scrollbar { display: none; }
+
+.qcard {
+  flex-shrink: 0; padding: 7px 12px;
+  border-radius: 11px; border: 1.5px solid;
+  cursor: pointer; font-size: 12.5px; font-weight: 600;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; transition: transform 0.12s ease, box-shadow 0.12s ease;
+  user-select: none;
+}
+.qcard:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.qcard:active:not(:disabled) { transform: scale(0.96); }
+.qcard:disabled { opacity: 0.4; cursor: not-allowed; }
+.qcard-normal { background: var(--primary-light); color: var(--primary); border-color: var(--primary-mid); }
+.qcard-redzone { background: #fff7f7; color: #d14040; border-color: #f8bebe; }
+.qcard-label {
+  font-size: 9px; font-weight: 700;
+  padding: 1px 4px; border-radius: 4px;
+  background: #f8bebe; color: #c53030; letter-spacing: 0.3px;
+}
+
+/* ─── Emergency 120 pulse ─── */
+.emergency-btn-pulse {
+  animation: emergencyPulse 2s ease infinite;
+}
+
+/* ─── Health tip card ─── */
+.health-tip-card {
+  margin: 0 12px 12px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
