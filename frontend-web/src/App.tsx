@@ -24,12 +24,19 @@ const App: React.FC = () => {
 
   const fetchDemoToken = async () => {
     setLoadingMsg('正在连接服务…');
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000); // 6s timeout
     try {
-      const res = await fetch(`${API_BASE}/api/v1/auth/demo-token`, { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/v1/auth/demo-token`, {
+        method: 'POST',
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
       const data = await res.json();
       setAuthToken(data.access_token);
       setLoadingMsg('连接成功');
     } catch {
+      clearTimeout(timer);
       setAuthToken('demo-offline-token');
       setLoadingMsg('进入演示模式');
     } finally {
