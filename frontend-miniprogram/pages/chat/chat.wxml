@@ -1,95 +1,105 @@
-<!-- 微信小程序健康咨询聊天页 -->
 <view class="container">
-  <!-- 合规横幅（顶部固定，始终可见） -->
-  <view class="disclaimer-banner">
-    <text class="banner-icon">🤖</text>
-    <text class="banner-text">
-      AIGC声明：本服务仅供健康科普参考，不构成医疗诊断。紧急请拨120
-    </text>
-  </view>
 
-  <!-- 消息列表 -->
-  <scroll-view
-    class="message-list"
-    scroll-y="true"
-    scroll-into-view="{{scrollToId}}"
-    scroll-with-animation="true"
-  >
-    <block wx:for="{{messages}}" wx:key="id">
-      <!-- 用户消息 -->
-      <view wx:if="{{item.role === 'user'}}" class="message-row user-row">
-        <view class="bubble user-bubble">
-          <text>{{item.content}}</text>
-        </view>
-        <view class="avatar user-avatar">👤</view>
-      </view>
-
-      <!-- AI消息 -->
-      <view wx:elif="{{item.role === 'assistant'}}" class="message-row assistant-row">
-        <view class="avatar assistant-avatar">🤖</view>
-        <view class="assistant-content">
-          <!-- AIGC标识 -->
-          <view class="aigc-badge">
-            <text class="aigc-tag">🤖 AI生成</text>
-            <text wx:if="{{item.messageId}}" class="msg-id">
-              #{{item.messageId.substring(0, 8)}}
-            </text>
-          </view>
-          <!-- 气泡 -->
-          <view class="bubble assistant-bubble">
-            <text>{{item.content}}</text>
-            <text wx:if="{{item.isStreaming}}" class="cursor">|</text>
-          </view>
-          <!-- 折叠免责声明 -->
-          <view class="disclaimer-toggle" bindtap="toggleDisclaimer" data-id="{{item.id}}">
-            <text>{{item.disclaimerExpanded ? '▼' : '▶'}} ⚠️ 查看AI生成声明</text>
-          </view>
-          <view wx:if="{{item.disclaimerExpanded}}" class="disclaimer-content">
-            <text>本内容由人工智能自动生成，仅供健康科普参考，不构成医疗诊断、治疗建议或处方依据。如有健康问题，请及时就诊。\n🤖 生成式人工智能服务</text>
-          </view>
-        </view>
-      </view>
-    </block>
-
-    <!-- 滚动锚点 -->
-    <view id="scroll-bottom" />
-  </scroll-view>
-
-  <!-- 快速建议 -->
-  <scroll-view class="suggestions" scroll-x="true">
-    <block wx:for="{{suggestions}}" wx:key="*this">
-      <view
-        class="suggestion-chip"
-        bindtap="sendSuggestion"
-        data-text="{{item}}"
-      >
-        <text>{{item}}</text>
-      </view>
-    </block>
-  </scroll-view>
-
-  <!-- 输入区域 -->
-  <view class="input-area">
-    <textarea
-      class="input-box"
-      value="{{inputText}}"
-      bindinput="onInput"
-      bindconfirm="handleSend"
-      placeholder="{{isStreaming ? 'AI回复中，请稍候...' : '请输入健康咨询问题...'}}"
-      disabled="{{isStreaming}}"
-      auto-height
-      maxlength="500"
-      cursor-spacing="16"
-    />
-    <view
-      class="send-btn {{(isStreaming || !inputText) ? 'disabled' : ''}}"
-      bindtap="handleSend"
-    >
-      <text>{{isStreaming ? '生成中' : '发送'}}</text>
+  <!-- 顶部合规横幅 -->
+  <view class="banner">
+    <view class="banner-left">
+      <view class="aigc-tag">🤖 AIGC</view>
+      <text class="banner-text">内容仅供健康科普参考，不构成医疗诊断</text>
+    </view>
+    <view class="emergency-btn" bindtap="callEmergency">
+      <text>📞 120</text>
     </view>
   </view>
 
-  <view class="input-tip">
-    <text>本助手仅提供健康科普，不能替代医生诊断</text>
+  <!-- 消息列表 -->
+  <scroll-view class="msg-list" scroll-y="true" scroll-into-view="{{scrollId}}" scroll-with-animation="true" enhanced="true">
+
+    <block wx:for="{{messages}}" wx:key="id">
+
+      <!-- 用户消息 -->
+      <view wx:if="{{item.role === 'user'}}" class="msg-row user-row">
+        <view class="user-bubble">
+          <text class="bubble-text">{{item.content}}</text>
+        </view>
+      </view>
+
+      <!-- AI消息 -->
+      <view wx:elif="{{item.role === 'assistant'}}" class="msg-row ai-row">
+        <view class="ai-avatar">🏥</view>
+        <view class="ai-content-wrap">
+          <!-- 加载骨架 -->
+          <view wx:if="{{item.isStreaming && item.content.length === 0}}" class="bubble ai-bubble">
+            <view class="skeleton-line" style="width:80%"></view>
+            <view class="skeleton-line" style="width:60%"></view>
+            <view class="skeleton-line" style="width:70%"></view>
+          </view>
+
+          <!-- 内容气泡（流式时显示纯文本，完成后显示六段式） -->
+          <view wx:elif="{{item.sections && item.sections.length > 0}}" class="bubble ai-bubble sections-bubble">
+            <block wx:for="{{item.sections}}" wx:key="key" wx:for-item="sec">
+              <view class="section-card" style="border-left-color:{{sec.color}};background:{{sec.bg}}">
+                <view class="section-title" style="color:{{sec.color}}">{{sec.title}}</view>
+                <text class="section-body">{{sec.body}}</text>
+              </view>
+            </block>
+          </view>
+          <view wx:else class="bubble ai-bubble">
+            <text class="bubble-text">{{item.content}}</text>
+            <text wx:if="{{item.isStreaming}}" class="cursor"> ▌</text>
+          </view>
+
+          <!-- AIGC底部标识 -->
+          <view wx:if="{{!item.isStreaming}}" class="aigc-mini">
+            <text>🤖 AI生成内容 · 仅供科普参考 · 不能替代医生</text>
+          </view>
+        </view>
+      </view>
+
+    </block>
+
+    <!-- 追问建议 -->
+    <view wx:if="{{followUps.length > 0}}" class="followup-wrap">
+      <text class="followup-label">💬 您可能还想了解：</text>
+      <scroll-view scroll-x="true" class="followup-scroll">
+        <view wx:for="{{followUps}}" wx:key="*this" class="followup-chip" bindtap="sendFollowUp" data-q="{{item}}">
+          <text>{{item}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view id="scroll-bottom" />
+  </scroll-view>
+
+  <!-- 快捷卡片 -->
+  <scroll-view class="quick-cards" scroll-x="true">
+    <view wx:for="{{quickCards}}" wx:key="text" class="qcard {{item.redzone ? 'qcard-red' : 'qcard-green'}}" bindtap="sendQuick" data-text="{{item.text}}">
+      <text class="qcard-icon">{{item.icon}}</text>
+      <text class="qcard-text">{{item.text}}</text>
+      <text wx:if="{{item.redzone}}" class="qcard-badge">拦截</text>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区 -->
+  <view class="input-area">
+    <textarea
+      class="input-box {{focused ? 'focused' : ''}}"
+      value="{{inputText}}"
+      bindinput="onInput"
+      bindfocus="onFocus"
+      bindblur="onBlur"
+      placeholder="{{isStreaming ? 'AI回复中…' : '请输入健康咨询问题…'}}"
+      disabled="{{isStreaming}}"
+      auto-height
+      maxlength="500"
+      cursor-spacing="20"
+      adjust-position="true"
+    />
+    <view class="send-btn {{canSend ? '' : 'disabled'}}" bindtap="handleSend">
+      <text wx:if="{{isStreaming}}">⏳</text>
+      <text wx:else>↑</text>
+    </view>
   </view>
+
+  <view class="input-tip">本助手不能替代医生诊断 · 如有不适请就医</view>
+
 </view>

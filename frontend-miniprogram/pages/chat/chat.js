@@ -1,211 +1,190 @@
-const API_BASE = 'https://your-api-domain.com'; // 生产环境替换为实际域名
+const API_BASE = 'https://health-ai-proxy.sunweihao900.workers.dev';
+
+const WELCOME = `您好！我是健康科普助手 🌿
+
+我可以为您提供：
+- 健康知识科普与解答
+- 就医科室分诊建议（非诊断）
+- 生活方式与预防指导
+
+⚠️ 我无法诊断疾病、开处方或评估病情，所有内容仅供参考。如有不适，请及时就诊。
+
+---
+🤖 本内容由AI自动生成 | 生成式人工智能服务`;
+
+const QUICK_CARDS = [
+  { icon: '🤧', text: '感冒了怎么护理？', redzone: false },
+  { icon: '❤️', text: '高血压饮食注意什么？', redzone: false },
+  { icon: '🩸', text: '糖尿病可以吃水果吗？', redzone: false },
+  { icon: '😴', text: '改善睡眠有什么方法？', redzone: false },
+  { icon: '🏃', text: '每天运动多少分钟合适？', redzone: false },
+  { icon: '🔬', text: '帮我诊断一下这些症状', redzone: true },
+  { icon: '💊', text: '给我开个药方', redzone: true },
+];
+
+// 六段式解析
+const SECTION_MAP = {
+  '🤝 共情':    { color: '#0a7c5f', bg: '#f0fdf9' },
+  '📚 原因解析': { color: '#0369a1', bg: '#f0f9ff' },
+  '💡 实用建议': { color: '#d97706', bg: '#fffbeb' },
+  '🚩 红旗信号': { color: '#dc2626', bg: '#fff5f5' },
+  '🏥 行动指引': { color: '#7c3aed', bg: '#faf5ff' },
+  '⚠️ 免责声明': { color: '#64748b', bg: '#f8fafc' },
+};
+
+function parseSections(content) {
+  const keys = Object.keys(SECTION_MAP);
+  const regex = new RegExp(`\\*\\*(${keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\*\\*`, 'g');
+  const parts = [];
+  let last = 0, match;
+  while ((match = regex.exec(content)) !== null) {
+    if (last < match.index && parts.length > 0) {
+      parts[parts.length - 1].body += content.slice(last, match.index).trim();
+    }
+    parts.push({ key: match[1], title: match[1], body: '', ...SECTION_MAP[match[1]] });
+    last = match.index + match[0].length;
+  }
+  if (parts.length > 0) parts[parts.length - 1].body = content.slice(last).trim();
+  return parts.length >= 3 ? parts : null;
+}
+
+function getFollowUps(text) {
+  if (/感冒|发烧|流感/.test(text)) return ['感冒期间怎么吃？', '什么情况需要看医生？', '感冒和流感怎么区分？'];
+  if (/高血压|血压/.test(text)) return ['高血压能运动吗？', '哪些食物有助控血压？', '血压计怎么正确测量？'];
+  if (/糖尿病|血糖/.test(text)) return ['低血糖怎么急救？', '糖尿病怎么安全运动？', '血糖多久监测一次？'];
+  if (/睡眠|失眠/.test(text)) return ['睡前哪些习惯影响睡眠？', '午睡多久最健康？', '褪黑素能长期服用吗？'];
+  if (/头痛|偏头痛/.test(text)) return ['头痛非药物缓解方法？', '偏头痛诱因有哪些？', '头痛需要做哪些检查？'];
+  return ['日常还需注意哪些事项？', '这种情况一般多久改善？', '需要做哪些检查？'];
+}
+
+const app = getApp();
+let _buffer = '';
 
 Page({
   data: {
-    messages: [
-      {
-        id: 'welcome',
-        role: 'assistant',
-        content:
-          '您好！我是健康科普助手，可以为您提供健康知识科普、就医科室建议和生活方式指导。\n\n请注意，我无法进行疾病诊断、开具处方，所有内容仅供参考。如有不适，请及时就医。',
-        disclaimerExpanded: false,
-      },
-    ],
+    messages: [{ id: 'welcome', role: 'assistant', content: WELCOME, isStreaming: false, sections: null }],
     inputText: '',
     isStreaming: false,
+    canSend: false,
+    focused: false,
     sessionId: '',
-    scrollToId: 'scroll-bottom',
-    suggestions: [
-      '感冒怎么护理？',
-      '高血压饮食注意什么？',
-      '头痛看哪个科？',
-      '糖尿病可以吃水果吗？',
-    ],
-    authToken: '',
+    scrollId: 'scroll-bottom',
+    followUps: [],
+    quickCards: QUICK_CARDS,
   },
 
   onLoad() {
-    this._fetchDemoToken();
+    _buffer = '';
+    this._fetchToken();
   },
 
-  // 获取演示Token
-  async _fetchDemoToken() {
-    try {
-      const res = await new Promise((resolve, reject) => {
-        wx.request({
-          url: `${API_BASE}/api/v1/auth/demo-token`,
-          method: 'POST',
-          success: resolve,
-          fail: reject,
-        });
-      });
-      if (res.data && res.data.access_token) {
-        this.setData({ authToken: res.data.access_token });
-      }
-    } catch (e) {
-      wx.showToast({ title: '连接服务失败', icon: 'error' });
-    }
+  _fetchToken() {
+    const controller = { aborted: false };
+    const timer = setTimeout(() => { controller.aborted = true; }, 6000);
+    wx.request({
+      url: `${API_BASE}/api/v1/auth/demo-token`,
+      method: 'POST',
+      timeout: 6000,
+      success: (res) => {
+        clearTimeout(timer);
+        if (res.data && res.data.access_token) app.globalData.authToken = res.data.access_token;
+      },
+      fail: () => { clearTimeout(timer); },
+    });
   },
 
   onInput(e) {
-    this.setData({ inputText: e.detail.value });
+    const v = e.detail.value;
+    this.setData({ inputText: v, canSend: v.trim().length > 0 && !this.data.isStreaming });
   },
+  onFocus() { this.setData({ focused: true }); },
+  onBlur() { this.setData({ focused: false }); },
 
-  sendSuggestion(e) {
-    const text = e.currentTarget.dataset.text;
-    this._sendMessage(text);
-  },
+  callEmergency() { wx.makePhoneCall({ phoneNumber: '120' }); },
 
-  handleSend() {
-    const text = this.data.inputText.trim();
+  sendQuick(e) { this._send(e.currentTarget.dataset.text); },
+  sendFollowUp(e) { this._send(e.currentTarget.dataset.q); },
+  handleSend() { this._send(this.data.inputText.trim()); },
+
+  _send(text) {
     if (!text || this.data.isStreaming) return;
-    this.setData({ inputText: '' });
-    this._sendMessage(text);
-  },
+    const token = app.globalData.authToken;
+    if (!token) { wx.showToast({ title: '正在连接服务，请稍后', icon: 'none' }); return; }
 
-  toggleDisclaimer(e) {
-    const id = e.currentTarget.dataset.id;
-    const messages = this.data.messages.map((m) => {
-      if (m.id === id) {
-        return { ...m, disclaimerExpanded: !m.disclaimerExpanded };
-      }
-      return m;
-    });
-    this.setData({ messages });
-  },
-
-  async _sendMessage(text) {
-    if (!this.data.authToken) {
-      wx.showToast({ title: '请稍后重试', icon: 'none' });
-      return;
-    }
-
-    const userMsgId = `user_${Date.now()}`;
-    const assistantMsgId = `assistant_${Date.now()}`;
-
-    // 添加用户消息
-    const updatedMessages = [
-      ...this.data.messages,
-      { id: userMsgId, role: 'user', content: text },
-    ];
-
-    // 添加AI消息占位
-    const allMessages = [
-      ...updatedMessages,
-      {
-        id: assistantMsgId,
-        role: 'assistant',
-        content: '',
-        isStreaming: true,
-        disclaimerExpanded: false,
-      },
-    ];
-
+    const uid = `u_${Date.now()}`;
+    const aid = `a_${Date.now()}`;
+    const withUser = [...this.data.messages, { id: uid, role: 'user', content: text }];
     this.setData({
-      messages: allMessages,
-      isStreaming: true,
-      scrollToId: 'scroll-bottom',
+      messages: [...withUser, { id: aid, role: 'assistant', content: '', isStreaming: true, sections: null }],
+      inputText: '', canSend: false, isStreaming: true, followUps: [], scrollId: 'scroll-bottom',
     });
 
-    // 构建API消息（排除welcome消息）
-    const apiMessages = updatedMessages
-      .filter((m) => m.id !== 'welcome')
-      .map((m) => ({ role: m.role, content: m.content }));
+    const apiMsgs = withUser
+      .filter(m => m.id !== 'welcome')
+      .map(m => ({ role: m.role, content: m.content }));
 
-    // 使用enableChunked实现流式效果
-    const requestTask = wx.request({
+    _buffer = '';
+    const task = wx.request({
       url: `${API_BASE}/api/v1/chat`,
       method: 'POST',
-      header: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.data.authToken}`,
-      },
-      data: JSON.stringify({
-        messages: apiMessages,
-        session_id: this.data.sessionId || undefined,
-        stream: true,
-      }),
-      enableChunked: true, // 微信小程序流式接收
-      success: (res) => {
-        // 流式结束后的处理
-        const messages = this.data.messages.map((m) => {
-          if (m.id === assistantMsgId) {
-            return { ...m, isStreaming: false };
-          }
-          return m;
-        });
-        this.setData({ messages, isStreaming: false });
+      header: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      data: JSON.stringify({ messages: apiMsgs, session_id: this.data.sessionId || undefined, stream: true }),
+      enableChunked: true,
+      timeout: 90000,
+      success: () => {
+        this._finishMsg(aid, text);
       },
       fail: (err) => {
-        const messages = this.data.messages.map((m) => {
-          if (m.id === assistantMsgId) {
-            return { ...m, content: '❌ 网络错误，请稍后再试', isStreaming: false };
-          }
-          return m;
-        });
-        this.setData({ messages, isStreaming: false });
+        this._updateMsg(aid, '❌ 网络错误，请稍后重试', false);
+        this.setData({ isStreaming: false, canSend: true });
       },
     });
 
-    // 处理流式数据块
-    requestTask.onChunkReceived((res) => {
-      const buffer = res.data;
-      const text = this._arrayBufferToString(buffer);
-      const lines = text.split('\n');
-
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        try {
-          const data = JSON.parse(line.slice(6));
-
-          if (data.type === 'chunk' && data.content) {
-            const messages = this.data.messages.map((m) => {
-              if (m.id === assistantMsgId) {
-                return { ...m, content: m.content + data.content };
-              }
-              return m;
-            });
-            this.setData({ messages, scrollToId: 'scroll-bottom' });
-          } else if (
-            data.type === 'emergency' ||
-            data.type === 'redirect' ||
-            data.type === 'error'
-          ) {
-            const messages = this.data.messages.map((m) => {
-              if (m.id === assistantMsgId) {
-                return { ...m, content: data.message || '服务暂时不可用', isStreaming: false };
-              }
-              return m;
-            });
-            this.setData({ messages, isStreaming: false });
-          } else if (data.type === 'done') {
-            if (data.message_id) {
-              const messages = this.data.messages.map((m) => {
-                if (m.id === assistantMsgId) {
-                  return { ...m, messageId: data.message_id, isStreaming: false };
-                }
-                return m;
-              });
-              this.setData({ messages, isStreaming: false });
+    task.onChunkReceived((res) => {
+      try {
+        const decoder = new TextDecoder('utf-8');
+        const chunk = decoder.decode(res.data);
+        _buffer += chunk;
+        const lines = _buffer.split('\n');
+        _buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (data.type === 'chunk' && data.content) {
+              this._appendMsg(aid, data.content);
+            } else if (['emergency', 'redirect', 'error'].includes(data.type)) {
+              this._updateMsg(aid, data.message || '服务暂时不可用', false);
+              this.setData({ isStreaming: false, canSend: true });
             }
-          }
-        } catch {
-          // 忽略解析错误
+          } catch {}
         }
-      }
+      } catch {}
     });
   },
 
-  _arrayBufferToString(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let result = '';
-    for (let i = 0; i < bytes.length; i++) {
-      result += String.fromCharCode(bytes[i]);
-    }
-    try {
-      return decodeURIComponent(escape(result));
-    } catch {
-      return result;
-    }
+  _appendMsg(aid, chunk) {
+    const msgs = this.data.messages.map(m =>
+      m.id === aid ? { ...m, content: m.content + chunk } : m
+    );
+    this.setData({ messages: msgs, scrollId: 'scroll-bottom' });
+  },
+
+  _updateMsg(aid, content, streaming) {
+    const msgs = this.data.messages.map(m =>
+      m.id === aid ? { ...m, content, isStreaming: streaming } : m
+    );
+    this.setData({ messages: msgs });
+  },
+
+  _finishMsg(aid, userText) {
+    const msgs = this.data.messages.map(m => {
+      if (m.id !== aid) return m;
+      const sections = parseSections(m.content);
+      return { ...m, isStreaming: false, sections };
+    });
+    const aiMsg = msgs.find(m => m.id === aid);
+    const followUps = aiMsg ? getFollowUps(userText + ' ' + aiMsg.content) : [];
+    this.setData({ messages: msgs, isStreaming: false, canSend: true, followUps, scrollId: 'scroll-bottom' });
   },
 });

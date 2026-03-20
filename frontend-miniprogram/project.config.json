@@ -1,0 +1,31 @@
+{
+  "appid": "touristappid",
+  "projectname": "health-ai-app",
+  "description": "健康AI助手 - 合规健康科普小程序",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "checkInvalidKey": true,
+    "showShadowRootInWxmlPanel": true,
+    "useIsolationContext": true,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useDevTools": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "miniApp": false,
+    "babelSetting": { "ignore": [], "disablePlugins": [], "outputPath": "" },
+    "condition": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.4.8",
+  "srcMiniprogramRoot": "./",
+  "condition": {}
+}

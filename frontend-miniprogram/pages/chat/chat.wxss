@@ -1,219 +1,66 @@
-/* 健康咨询聊天页样式 */
+.container { display: flex; flex-direction: column; height: 100vh; background: #edf1f7; }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: #f8f9fa;
-}
-
-/* 合规横幅 */
-.disclaimer-banner {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: #fff3cd;
-  border-bottom: 1rpx solid #ffc107;
-  padding: 12rpx 24rpx;
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-}
-
-.banner-icon {
-  font-size: 28rpx;
-  flex-shrink: 0;
-}
-
-.banner-text {
-  font-size: 22rpx;
-  color: #856404;
-  line-height: 1.4;
-}
+/* 顶部横幅 */
+.banner { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 24rpx; background: linear-gradient(135deg, #0a7c5f, #064e3b); flex-shrink: 0; }
+.banner-left { display: flex; align-items: center; gap: 12rpx; flex: 1; min-width: 0; }
+.aigc-tag { background: rgba(255,255,255,0.2); color: #fff; font-size: 20rpx; font-weight: 700; padding: 4rpx 14rpx; border-radius: 6rpx; flex-shrink: 0; }
+.banner-text { font-size: 22rpx; color: rgba(255,255,255,0.88); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.emergency-btn { background: #ef4444; color: #fff; padding: 8rpx 18rpx; border-radius: 8rpx; font-size: 24rpx; font-weight: 700; flex-shrink: 0; }
 
 /* 消息列表 */
-.message-list {
-  flex: 1;
-  padding: 16rpx;
-  overflow: hidden;
-}
-
-.message-row {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 24rpx;
-  gap: 12rpx;
-}
-
-.user-row {
-  flex-direction: row-reverse;
-}
-
-.assistant-row {
-  flex-direction: row;
-}
+.msg-list { flex: 1; padding: 16rpx 20rpx 8rpx; }
+.msg-row { display: flex; margin-bottom: 24rpx; align-items: flex-start; gap: 14rpx; }
+.user-row { flex-direction: row-reverse; }
+.ai-row { flex-direction: row; }
 
 /* 头像 */
-.avatar {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36rpx;
-  flex-shrink: 0;
-}
-
-.user-avatar {
-  background: #6c757d;
-}
-
-.assistant-avatar {
-  background: #0d6efd;
-}
+.ai-avatar { width: 72rpx; height: 72rpx; border-radius: 20rpx; background: linear-gradient(135deg, #0a7c5f, #064e3b); display: flex; align-items: center; justify-content: center; font-size: 36rpx; flex-shrink: 0; }
 
 /* 气泡 */
-.bubble {
-  max-width: 75%;
-  padding: 20rpx 24rpx;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  line-height: 1.6;
-  word-break: break-word;
-}
-
-.user-bubble {
-  background: #0d6efd;
-  color: #ffffff;
-  border-radius: 16rpx 8rpx 16rpx 16rpx;
-}
-
-.assistant-bubble {
-  background: #ffffff;
-  color: #212529;
-  border-radius: 8rpx 16rpx 16rpx 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-}
-
-/* AIGC标识 */
-.assistant-content {
-  flex: 1;
-  max-width: 75%;
-}
-
-.aigc-badge {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  margin-bottom: 8rpx;
-}
-
-.aigc-tag {
-  background: #e7f3ff;
-  color: #0d6efd;
-  font-size: 20rpx;
-  padding: 2rpx 12rpx;
-  border-radius: 20rpx;
-  font-weight: 600;
-}
-
-.msg-id {
-  font-size: 18rpx;
-  color: #adb5bd;
-}
+.bubble { max-width: 540rpx; padding: 20rpx 24rpx; border-radius: 4rpx; word-break: break-word; }
+.bubble-text { font-size: 28rpx; line-height: 1.7; }
+.user-bubble { background: linear-gradient(135deg, #0a7c5f, #076648); border-radius: 20rpx 4rpx 20rpx 20rpx; max-width: 540rpx; padding: 20rpx 24rpx; word-break: break-word; }
+.user-bubble .bubble-text { color: #fff; font-size: 28rpx; line-height: 1.7; }
+.ai-bubble { background: #fff; border-radius: 4rpx 20rpx 20rpx 20rpx; box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.07); }
+.ai-content-wrap { flex: 1; max-width: 540rpx; }
 
 /* 流式光标 */
-.cursor {
-  display: inline-block;
-  animation: blink 1s step-end infinite;
-  color: #0d6efd;
-}
+.cursor { color: #0a7c5f; font-weight: 700; }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
+/* 骨架屏 */
+.skeleton-line { height: 26rpx; border-radius: 8rpx; background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%); background-size: 600rpx 100%; animation: shimmer 1.4s infinite; margin-bottom: 14rpx; }
+@keyframes shimmer { 0% { background-position: -600rpx 0; } 100% { background-position: 600rpx 0; } }
 
-/* 免责声明折叠 */
-.disclaimer-toggle {
-  margin-top: 8rpx;
-  font-size: 22rpx;
-  color: #6c757d;
-  padding: 4rpx 0;
-}
+/* 六段式卡片 */
+.sections-bubble { padding: 16rpx; display: flex; flex-direction: column; gap: 0; }
+.section-card { border-left-width: 4rpx; border-left-style: solid; border-radius: 10rpx; padding: 16rpx 18rpx; margin-bottom: 10rpx; }
+.section-card:last-child { margin-bottom: 0; }
+.section-title { font-size: 24rpx; font-weight: 700; margin-bottom: 8rpx; }
+.section-body { font-size: 26rpx; line-height: 1.72; color: #2d3748; }
 
-.disclaimer-content {
-  margin-top: 8rpx;
-  padding: 16rpx;
-  background: #fff3cd;
-  border-left: 6rpx solid #ffc107;
-  border-radius: 8rpx;
-  font-size: 22rpx;
-  color: #856404;
-  line-height: 1.5;
-}
+/* AIGC 底部标识 */
+.aigc-mini { margin-top: 8rpx; padding: 8rpx 14rpx; background: #f8fafc; border-radius: 8rpx; border: 1rpx solid #e2e8f0; }
+.aigc-mini text { font-size: 20rpx; color: #8fa0b3; }
 
-/* 快速建议 */
-.suggestions {
-  padding: 12rpx 16rpx;
-  white-space: nowrap;
-  background: #ffffff;
-  border-top: 1rpx solid #dee2e6;
-}
+/* 追问建议 */
+.followup-wrap { padding: 0 0 16rpx 86rpx; }
+.followup-label { font-size: 22rpx; color: #8fa0b3; display: block; margin-bottom: 10rpx; }
+.followup-scroll { white-space: nowrap; }
+.followup-chip { display: inline-block; padding: 10rpx 20rpx; margin-right: 12rpx; background: #fff; border: 2rpx solid #dde4ee; border-radius: 999rpx; font-size: 24rpx; color: #5a6d84; white-space: nowrap; }
 
-.suggestion-chip {
-  display: inline-block;
-  padding: 8rpx 20rpx;
-  margin-right: 12rpx;
-  background: #e7f3ff;
-  color: #0d6efd;
-  border: 1rpx solid #b6d4fe;
-  border-radius: 24rpx;
-  font-size: 24rpx;
-  white-space: nowrap;
-}
+/* 快捷卡片 */
+.quick-cards { padding: 12rpx 16rpx; background: #fff; border-top: 1rpx solid #e8edf4; white-space: nowrap; flex-shrink: 0; }
+.qcard { display: inline-flex; align-items: center; gap: 8rpx; padding: 10rpx 18rpx; border-radius: 12rpx; margin-right: 12rpx; border: 2rpx solid; font-size: 24rpx; font-weight: 600; white-space: nowrap; }
+.qcard-green { background: #e8f7f4; color: #0a7c5f; border-color: #aeddd6; }
+.qcard-red { background: #fff7f7; color: #c53030; border-color: #f8bebe; }
+.qcard-icon { font-size: 28rpx; }
+.qcard-text { font-size: 24rpx; }
+.qcard-badge { font-size: 18rpx; font-weight: 700; background: #fca5a5; color: #c53030; padding: 2rpx 8rpx; border-radius: 6rpx; }
 
-/* 输入区域 */
-.input-area {
-  display: flex;
-  gap: 12rpx;
-  align-items: flex-end;
-  padding: 16rpx 16rpx 8rpx;
-  background: #ffffff;
-  border-top: 1rpx solid #dee2e6;
-}
-
-.input-box {
-  flex: 1;
-  padding: 16rpx 20rpx;
-  border: 1rpx solid #dee2e6;
-  border-radius: 40rpx;
-  font-size: 28rpx;
-  background: #f8f9fa;
-  min-height: 72rpx;
-  max-height: 200rpx;
-}
-
-.send-btn {
-  padding: 16rpx 32rpx;
-  background: #0d6efd;
-  color: #ffffff;
-  border-radius: 40rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  flex-shrink: 0;
-  text-align: center;
-}
-
-.send-btn.disabled {
-  background: #adb5bd;
-}
-
-.input-tip {
-  text-align: center;
-  font-size: 20rpx;
-  color: #adb5bd;
-  padding: 4rpx 0 12rpx;
-  background: #ffffff;
-}
+/* 输入区 */
+.input-area { display: flex; align-items: flex-end; gap: 12rpx; padding: 16rpx 20rpx 8rpx; background: #fff; border-top: 1rpx solid #e8edf4; flex-shrink: 0; }
+.input-box { flex: 1; padding: 16rpx 20rpx; border: 2rpx solid #dde4ee; border-radius: 20rpx; font-size: 28rpx; background: #f5f7fa; min-height: 72rpx; max-height: 200rpx; transition: border-color 0.2s; }
+.input-box.focused { border-color: #0a7c5f; background: #f0fdf9; }
+.send-btn { width: 72rpx; height: 72rpx; border-radius: 16rpx; background: linear-gradient(135deg, #0a7c5f, #064e3b); display: flex; align-items: center; justify-content: center; font-size: 34rpx; color: #fff; font-weight: 700; flex-shrink: 0; }
+.send-btn.disabled { background: #cbd5e1; }
+.input-tip { text-align: center; font-size: 20rpx; color: #adb5bd; padding: 6rpx 0 16rpx; background: #fff; flex-shrink: 0; }
