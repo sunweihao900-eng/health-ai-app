@@ -8,8 +8,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Python依赖
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# 云部署(Railway/Render)用 requirements-cloud.txt 节省内存，本地/Docker 用 requirements.txt
+ARG REQUIREMENTS_FILE=requirements-cloud.txt
+COPY requirements.txt requirements-cloud.txt ./
+RUN pip install --no-cache-dir -r ${REQUIREMENTS_FILE}
 
 # 应用代码
 COPY . .
