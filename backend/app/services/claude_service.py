@@ -139,7 +139,7 @@ class ClaudeService:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://health-ai-app.local",
-            "X-Title": "健康AI咨询助手",
+            "X-Title": "Health AI Assistant",
         }
         payload = {
             "model": self.model,
