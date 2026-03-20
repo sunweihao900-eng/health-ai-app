@@ -248,3 +248,41 @@ body {
   border-radius: 12px;
   padding: 12px 14px;
 }
+
+/* ─── Mobile responsive ─── */
+@media (max-width: 768px) {
+  /* Messages area: less horizontal padding */
+  .messages-area { padding: 14px 12px 8px !important; }
+  .msg-enter { animation-duration: 0.22s; }
+
+  /* Follow-up chips: allow wrapping but keep readable */
+  .followup-wrap { gap: 6px; }
+  .followup-chip {
+    font-size: 12px;
+    padding: 7px 12px;
+    /* Bigger touch target */
+    min-height: 36px;
+  }
+
+  /* Quick cards: slightly smaller */
+  .qcard { font-size: 12px; padding: 8px 11px; min-height: 36px; }
+
+  /* Section cards */
+  .section-card { padding: 9px 11px; }
+  .section-content { font-size: 13.5px; }
+
+  /* AIGC mini: compact */
+  .aigc-mini { font-size: 10.5px; }
+
+  /* Markdown: slightly smaller */
+  .md { font-size: 14px; }
+
+  /* Input tip line: hide on very small */
+  .input-tip { display: none; }
+}
+
+@media (max-width: 480px) {
+  .qcard { font-size: 11.5px; padding: 7px 10px; }
+  .followup-chip { font-size: 11.5px; padding: 6px 11px; }
+  .section-content { font-size: 13px; }
+}

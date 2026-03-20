@@ -123,10 +123,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ authToken, apiBase = API_BASE }
   const [isStreaming, setIsStreaming] = useState(false);
   const [sessionId, setSessionId] = useState('');
   const [followUps, setFollowUps] = useState<string[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768);
   const [sessionMsgCount, setSessionMsgCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (!mobile) setSidebarOpen(true);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -237,8 +248,29 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ authToken, apiBase = API_BASE }
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg)', fontFamily: 'inherit' }}>
 
+      {/* ── Mobile backdrop ───────────────────────────────────── */}
+      {isMobile && sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            zIndex: 199, animation: 'fadeIn 0.2s ease',
+          }}
+        />
+      )}
+
       {/* ── Sidebar ───────────────────────────────────────────── */}
-      <div style={{
+      <div style={isMobile ? {
+        position: 'fixed', top: 0, left: 0, zIndex: 200,
+        height: '100vh', width: '280px',
+        transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+        transition: 'transform 0.3s cubic-bezier(0.4,0,0.2,1)',
+        background: 'linear-gradient(175deg, #0a7c5f 0%, #064e3b 100%)',
+        display: 'flex', flexDirection: 'column',
+        boxShadow: '4px 0 32px rgba(0,0,0,0.22)',
+        overflowY: 'auto',
+      } : {
         width: sidebarOpen ? '268px' : '0',
         minWidth: sidebarOpen ? '268px' : '0',
         overflow: 'hidden',
@@ -434,21 +466,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ authToken, apiBase = API_BASE }
           </div>
 
           {/* Stats badges */}
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
             {isOfflineMode && (
               <span style={{
-                background: '#fefce8', color: '#a16207', padding: '4px 10px',
-                borderRadius: '20px', fontSize: '11.5px', fontWeight: 600,
-                border: '1px solid #fde68a',
-              }}>演示模式</span>
+                background: '#fefce8', color: '#a16207', padding: '4px 8px',
+                borderRadius: '20px', fontSize: '11px', fontWeight: 600,
+                border: '1px solid #fde68a', whiteSpace: 'nowrap',
+              }}>{isMobile ? '演示' : '演示模式'}</span>
             )}
-            <div style={{
-              background: 'var(--primary-light)', border: '1px solid var(--primary-mid)',
-              color: 'var(--primary)', padding: '4px 11px',
-              borderRadius: '20px', fontSize: '12px', fontWeight: 600,
-            }}>
-              {messages.length} 条
-            </div>
+            {!isMobile && (
+              <div style={{
+                background: 'var(--primary-light)', border: '1px solid var(--primary-mid)',
+                color: 'var(--primary)', padding: '4px 11px',
+                borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+              }}>
+                {messages.length} 条
+              </div>
+            )}
           </div>
         </div>
 
@@ -456,7 +490,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ authToken, apiBase = API_BASE }
         <DisclaimerBanner />
 
         {/* Messages area */}
-        <div style={{
+        <div className="messages-area" style={{
           flex: 1, overflowY: 'auto', padding: '20px 20px 8px',
           background: 'linear-gradient(180deg, #edf1f7 0%, #f0f4f8 100%)',
         }}>
@@ -473,7 +507,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ authToken, apiBase = API_BASE }
 
           {/* Follow-up suggestion chips */}
           {followUps.length > 0 && !isStreaming && (
-            <div style={{ paddingLeft: '48px', paddingRight: '4px' }}>
+            <div style={{ paddingLeft: isMobile ? '4px' : '48px', paddingRight: '4px' }}>
               <div style={{ fontSize: '11.5px', color: 'var(--text-light)', marginBottom: '7px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <span>💬</span> 您可能还想了解：
               </div>

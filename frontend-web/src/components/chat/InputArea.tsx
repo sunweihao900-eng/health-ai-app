@@ -264,7 +264,7 @@ const InputArea: React.FC<InputAreaProps> = ({
       </div>
 
       {/* Tip */}
-      <div style={{
+      <div className="input-tip" style={{
         marginTop: '7px', textAlign: 'center',
         fontSize: '11px', color: '#8fa0b3',
       }}>
