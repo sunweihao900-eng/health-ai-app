@@ -435,15 +435,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ authToken, apiBase = API_BASE }
           boxShadow: '0 1px 6px rgba(0,0,0,0.04)', flexShrink: 0,
         }}>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            padding: '6px', borderRadius: '9px',
-            color: 'var(--text-muted)', fontSize: '18px',
-            display: 'flex', alignItems: 'center',
+            background: isMobile ? 'var(--primary)' : 'none',
+            border: 'none', cursor: 'pointer',
+            padding: isMobile ? '7px 10px' : '6px',
+            borderRadius: '9px',
+            color: isMobile ? '#fff' : 'var(--text-muted)',
+            fontSize: isMobile ? '16px' : '18px',
+            display: 'flex', alignItems: 'center', gap: isMobile ? '5px' : '0',
             transition: 'background 0.15s',
           }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-          >☰</button>
+            onMouseEnter={e => { if (!isMobile) (e.currentTarget as HTMLButtonElement).style.background = 'var(--bg)'; }}
+            onMouseLeave={e => { if (!isMobile) (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
+          >
+            ☰{isMobile && <span style={{ fontSize: '12px', fontWeight: 600 }}>菜单</span>}
+          </button>
 
           {/* Title */}
           <div style={{ flex: 1 }}>

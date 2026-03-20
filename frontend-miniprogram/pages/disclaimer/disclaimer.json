@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "使用须知",
   "navigationBarBackgroundColor": "#0a7c5f",
-  "navigationBarTextStyle": "white"
+  "navigationBarTextStyle": "white",
+  "onReachBottomDistance": 50
 }

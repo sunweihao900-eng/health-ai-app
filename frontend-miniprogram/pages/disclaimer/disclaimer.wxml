@@ -5,7 +5,7 @@
     <view class="header-sub">请滚动阅读完整内容后方可使用</view>
   </view>
 
-  <scroll-view class="content" scroll-y="true" bindscrolltolower="onScrollToBottom">
+  <view class="content">
     <view class="section">
       <view class="section-title">📋 服务性质</view>
       <view class="section-body">本服务由AI驱动，是健康科普工具，不是医疗机构，AI不具备执业医师资质，无法提供医疗诊断、治疗方案或处方建议。</view>
@@ -28,7 +28,7 @@
       <view class="section-body">咨询内容发送前自动脱敏（移除手机号、身份证等），加密存储，90天后自动清除。</view>
     </view>
     <view class="bottom-marker">— 已阅读至末尾 —</view>
-  </scroll-view>
+  </view>
 
   <view class="footer">
     <view wx:if="{{!canAgree}}" class="read-tip">↓ 请向下滚动阅读完整内容</view>

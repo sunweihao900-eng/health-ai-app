@@ -1,5 +1,5 @@
 {
-  "appid": "touristappid",
+  "appid": "wx6374dbf1f05e74f5",
   "projectname": "health-ai-app",
   "description": "健康AI助手 - 合规健康科普小程序",
   "setting": {
@@ -21,11 +21,31 @@
     "packNpmManually": false,
     "packNpmRelationList": [],
     "miniApp": false,
-    "babelSetting": { "ignore": [], "disablePlugins": [], "outputPath": "" },
-    "condition": false
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "condition": false,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "libVersion": "3.4.8",
   "srcMiniprogramRoot": "./",
-  "condition": {}
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
 }

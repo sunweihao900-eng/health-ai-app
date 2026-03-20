@@ -22,29 +22,35 @@ const QUICK_CARDS = [
   { icon: '💊', text: '给我开个药方', redzone: true },
 ];
 
-// 六段式解析
-const SECTION_MAP = {
-  '🤝 共情':    { color: '#0a7c5f', bg: '#f0fdf9' },
-  '📚 原因解析': { color: '#0369a1', bg: '#f0f9ff' },
-  '💡 实用建议': { color: '#d97706', bg: '#fffbeb' },
-  '🚩 红旗信号': { color: '#dc2626', bg: '#fff5f5' },
-  '🏥 行动指引': { color: '#7c3aed', bg: '#faf5ff' },
-  '⚠️ 免责声明': { color: '#64748b', bg: '#f8fafc' },
-};
+// 六段式解析 — 按关键词匹配（不依赖 emoji 完全一致）
+const SECTION_KEYWORDS = [
+  { keyword: '共情',    color: '#0a7c5f', bg: '#f0fdf9' },
+  { keyword: '原因解析', color: '#0369a1', bg: '#f0f9ff' },
+  { keyword: '实用建议', color: '#d97706', bg: '#fffbeb' },
+  { keyword: '红旗信号', color: '#dc2626', bg: '#fff5f5' },
+  { keyword: '行动指引', color: '#7c3aed', bg: '#faf5ff' },
+  { keyword: '免责声明', color: '#64748b', bg: '#f8fafc' },
+  { keyword: '重要提示', color: '#64748b', bg: '#f8fafc' },
+];
 
 function parseSections(content) {
-  const keys = Object.keys(SECTION_MAP);
-  const regex = new RegExp(`\\*\\*(${keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\*\\*`, 'g');
+  // 匹配 **任意内容含关键词** 格式
+  const regex = /\*\*([^*]+)\*\*/g;
   const parts = [];
   let last = 0, match;
   while ((match = regex.exec(content)) !== null) {
-    if (last < match.index && parts.length > 0) {
-      parts[parts.length - 1].body += content.slice(last, match.index).trim();
+    const title = match[1].trim();
+    const kw = SECTION_KEYWORDS.find(k => title.includes(k.keyword));
+    if (!kw) continue;
+    if (parts.length > 0) {
+      parts[parts.length - 1].body = content.slice(last, match.index).trim();
     }
-    parts.push({ key: match[1], title: match[1], body: '', ...SECTION_MAP[match[1]] });
+    parts.push({ key: title, title, body: '', color: kw.color, bg: kw.bg });
     last = match.index + match[0].length;
   }
   if (parts.length > 0) parts[parts.length - 1].body = content.slice(last).trim();
+  // 清除 body 里残留的 **加粗** 星号
+  parts.forEach(p => { p.body = p.body.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*/g, '').replace(/\n*---+\n*/g, '').trim(); });
   return parts.length >= 3 ? parts : null;
 }
 
